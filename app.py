@@ -11,6 +11,8 @@ app = Flask(__name__)
 Session = sessionmaker(bind=engine)
 SECRET_KEY = "chave-secreta-do-sistema"
 
+# Decorador para proteger rotas com autenticação JWT.
+# Lê o token do cabeçalho, valida e identifica o usuário.
 def token_requerido(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -33,6 +35,8 @@ def token_requerido(f):
         return f(usuario, *args, **kwargs)
     return decorated
 
+# Decorador para proteger rotas com autenticação JWT.
+# Lê o token do cabeçalho, valida e identifica o usuário.
 @app.route("/registrar", methods=["POST"])
 def registrar():
     data = request.get_json()
@@ -48,6 +52,7 @@ def registrar():
     session.commit()
     return jsonify({"mensagem": "Usuário registrado com sucesso"}), 201
 
+# Endpoint de login que retorna um token JWT para autenticação.
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -63,6 +68,8 @@ def login():
         return jsonify({"token": token}), 200
     return jsonify({"erro": "Credenciais inválidas"}), 401
 
+# Cadastra um novo paciente no sistema.
+# Espera JSON com dados como nome, CPF, nascimento, sexo, telefone, endereço.
 @app.route("/paciente", methods=["POST"])
 def cadastrar_paciente():
     data = request.get_json()
@@ -73,6 +80,7 @@ def cadastrar_paciente():
     session.commit()
     return jsonify({"mensagem": "Paciente cadastrado"}), 201
 
+# Lista todos os pacientes cadastrados no sistema.
 @app.route("/pacientes", methods=["GET"])
 def listar_pacientes():
     session = Session()
@@ -87,6 +95,8 @@ def listar_pacientes():
         "endereco": p.endereco
     } for p in pacientes]), 200
 
+# Atualiza os dados de um paciente específico.
+# Passar o ID do paciente na URL e os campos desejados no corpo.
 @app.route("/paciente/<int:id>", methods=["PUT"])
 def atualizar_paciente(id):
     session = Session()
@@ -102,6 +112,7 @@ def atualizar_paciente(id):
     session.commit()
     return jsonify({"mensagem": "Paciente atualizado"}), 200
 
+# Remove um paciente do sistema a partir de seu ID.
 @app.route("/paciente/<int:id>", methods=["DELETE"])
 def deletar_paciente(id):
     session = Session()
@@ -112,6 +123,8 @@ def deletar_paciente(id):
     session.commit()
     return jsonify({"mensagem": "Paciente deletado"}), 200
 
+# Cadastra um novo profissional de saúde.
+# Espera JSON com nome, CRM, especialidade, telefone, email.
 @app.route("/profissional", methods=["POST"])
 def cadastrar_profissional():
     data = request.get_json()
@@ -121,6 +134,7 @@ def cadastrar_profissional():
     session.commit()
     return jsonify({"mensagem": "Profissional cadastrado"}), 201
 
+# Lista todos os profissionais de saúde cadastrados.
 @app.route("/profissionais", methods=["GET"])
 def listar_profissionais():
     session = Session()
@@ -134,6 +148,8 @@ def listar_profissionais():
         "email": p.email
     } for p in profissionais]), 200
 
+# Atualiza os dados de um profissional de saúde.
+# Passar o ID na URL e os campos desejados no corpo.
 @app.route("/profissional/<int:id>", methods=["PUT"])
 def atualizar_profissional(id):
     session = Session()
@@ -147,6 +163,7 @@ def atualizar_profissional(id):
     session.commit()
     return jsonify({"mensagem": "Profissional atualizado"}), 200
 
+# Remove um profissional de saúde pelo ID.
 @app.route("/profissional/<int:id>", methods=["DELETE"])
 def deletar_profissional(id):
     session = Session()
@@ -157,5 +174,6 @@ def deletar_profissional(id):
     session.commit()
     return jsonify({"mensagem": "Profissional deletado"}), 200
 
+# Inicia o servidor Flask em modo debug.
 if __name__ == "__main__":
     app.run(debug=True)
