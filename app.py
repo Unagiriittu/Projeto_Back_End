@@ -6,6 +6,7 @@ import jwt
 import datetime
 from functools import wraps
 
+# Inicialização da aplicação Flask e configuração do banco de dados
 app = Flask(__name__)
 Session = sessionmaker(bind=engine)
 SECRET_KEY = "chave-secreta-do-sistema"
