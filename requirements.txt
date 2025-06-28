@@ -1,0 +1,5 @@
+Flask
+SQLAlchemy
+Werkzeug
+PyJWT
+python-dotenv
