@@ -74,7 +74,10 @@ def login():
 def cadastrar_paciente():
     data = request.get_json()
     session = Session()
-    nascimento = datetime.datetime.strptime(data["data_nascimento"], "%Y-%m-%d").date()
+    # Verificar se CPF já está cadastrado
+    if session.query(Paciente).filter_by(cpf=data["cpf"]).first():
+        return jsonify({"erro": "Paciente com este CPF já está cadastrado"}), 400
+    nascimento = datetime.datetime.strptime(data.pop("data_nascimento"), "%Y-%m-%d").date()
     novo = Paciente(**data, data_nascimento=nascimento)
     session.add(novo)
     session.commit()
